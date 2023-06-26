@@ -1,0 +1,770 @@
+<?php
+
+/**
+ * Implements hook_schema().
+ */
+function webdav_schema() {
+  $schema['webdav__addressbooks'] = [
+    'description' => '',
+    'fields' => [
+      'id' => [
+        'description' => '',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'principaluri' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 255,
+        'binary' => TRUE,
+      ],
+      'displayname' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 255,
+      ],
+      'uri' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 200,
+        'binary' => TRUE,
+      ],
+      'description' => [
+        'description' => '',
+        'type' => 'text',
+      ],
+    ],
+    'primary key' => [
+      'id',
+    ],
+    'unique keys' => [
+      'principaluri_uri' => [
+        'principaluri',
+        'uri',
+      ],
+    ],
+  ];
+  $schema['webdav__cards'] = [
+    'description' => '',
+    'fields' => [
+      'id' => [
+        'description' => '',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'addressbookid' => [
+        'description' => '',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'carddata' => [
+        'description' => '',
+        'type' => 'blob',
+      ],
+      'uri' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 200,
+        'binary' => TRUE,
+      ],
+      'lastmodified' => [
+        'description' => '',
+        'type' => 'int',
+        'unsigned' => TRUE,
+      ],
+      'etag' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 32,
+        'binary' => TRUE,
+      ],
+      'size' => [
+        'description' => '',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+    ],
+    'primary key' => [
+      'id',
+    ],
+  ];
+  $schema['webdav__addressbookchanges'] = [
+    'description' => '',
+    'fields' => [
+      'id' => [
+        'description' => '',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'uri' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 200,
+        'not null' => TRUE,
+        'binary' => TRUE,
+      ],
+      'synctoken' => [
+        'description' => '',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'addressbookid' => [
+        'description' => '',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'operation' => [
+        'description' => '',
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => TRUE,
+      ],
+    ],
+    'primary key' => [
+      'id',
+    ],
+    'indexes' => [
+      'addressbookid_synctoken' => [
+        'addressbookid', 
+        'synctoken',
+      ],
+    ],
+  ];
+  $schema['webdav__calendarobjects'] = [
+    'description' => '',
+    'fields' => [
+      'id' => [
+        'description' => '',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'calendardata' => [
+        'description' => '',
+        'type' => 'blob',
+      ],
+      'uri' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 200,
+        'binary' => TRUE,
+      ],
+      'calendarid' => [
+        'description' => '',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'lastmodified' => [
+        'description' => '',
+        'type' => 'int',
+        'unsigned' => TRUE,
+      ],
+      'etag' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 32,
+        'binary' => TRUE,
+      ],
+      'size' => [
+        'description' => '',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'componenttype' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 8,
+        'binary' => TRUE,
+      ],
+      'firstoccurence' => [
+        'description' => '',
+        'type' => 'int',
+        'unsigned' => TRUE,
+      ],
+      'lastoccurence' => [
+        'description' => '',
+        'type' => 'int',
+        'unsigned' => TRUE,
+      ],
+      'uid' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 200,
+        'binary' => TRUE,
+      ],
+    ],
+    'primary key' => [
+      'id',
+    ],
+    'unique keys' => [
+      'calendarid' => ['calendarid'],
+      'uri' => ['uri'],
+    ],
+    'indexes' => [
+      'calendarid_time' => [
+        'calendarid', 
+        'firstoccurence',
+      ],
+    ],
+  ];
+  $schema['webdav__calendars'] = [
+    'description' => '',
+    'fields' => [
+      'id' => [
+        'description' => '',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'synctoken' => [
+        'description' => '',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => '1',
+      ],
+      'components' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 21,
+        'binary' => TRUE,
+      ],
+    ],
+    'primary key' => [
+      'id',
+    ],
+  ];
+  $schema['webdav__calendarinstances'] = [
+    'description' => '',
+    'fields' => [
+      'id' => [
+        'description' => '',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'calendarid' => [
+        'description' => '',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'principaluri' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 100,
+        'binary' => TRUE,
+      ],
+      'access' => [
+        'description' => '',
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => TRUE,
+        'default' => '1',
+        'comment' => '1 = owner, 2 = read, 3 = readwrite',
+      ],
+      'displayname' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 100,
+      ],
+      'uri' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 200,
+        'binary' => TRUE,
+      ],
+      'description' => [
+        'description' => '',
+        'type' => 'text',
+      ],
+      'calendarorder' => [
+        'description' => '',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => '0',
+      ],
+      'calendarcolor' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 10,
+        'binary' => TRUE,
+      ],
+      'timezone' => [
+        'description' => '',
+        'type' => 'text',
+      ],
+      'transparent' => [
+        'description' => '',
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => TRUE,
+        'default' => '0',
+      ],
+      'share_href' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 100,
+        'binary' => TRUE,
+      ],
+      'share_displayname' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 100,
+      ],
+      'share_invitestatus' => [
+        'description' => '',
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => TRUE,
+        'default' => '2',
+        'comment' => '1 = noresponse, 2 = accepted, 3 = declined, 4 = invalid',
+      ],
+    ],
+    'primary key' => [
+      'id',
+    ],
+    'unique keys' => [
+      'calendarid' => ['calendarid'],
+      'principaluri' => ['principaluri'],
+      'share_href' => ['share_href'],
+      'uri' => ['uri'],
+    ],
+  ];
+  $schema['webdav__calendarchanges'] = [
+    'description' => '',
+    'fields' => [
+      'id' => [
+        'description' => '',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'uri' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 200,
+        'binary' => TRUE,
+      ],
+      'synctoken' => [
+        'description' => '',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => '1',
+      ],
+      'calendarid' => [
+        'description' => '',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => '1',
+      ],
+      'operation' => [
+        'description' => '',
+        'type' => 'int',
+        'size' => 'tiny',
+        'unsigned' => TRUE,
+      ],
+    ],
+    'primary key' => [
+      'id',
+    ],
+    'indexes' => [
+      'calendarid_synctoken' => [
+        'calendarid',
+        'synctoken',
+      ],
+    ],
+  ];
+  $schema['webdav__calendarsubscriptions'] = [
+    'description' => '',
+    'fields' => [
+      'id' => [
+        'description' => '',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'uri' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 200,
+        'binary' => TRUE,
+        'not null' => TRUE,
+      ],
+      'principaluri' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 100,
+        'binary' => TRUE,
+        'not null' => TRUE,
+      ],
+      'source' => [
+        'description' => '',
+        'type' => 'text',
+      ],
+      'displayname' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 100,
+      ],
+      'refreshrate' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 10,
+      ],
+      'calendarorder' => [
+        'description' => '',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => '0',
+      ],
+      'calendarcolor' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 10,
+        'binary' => TRUE,
+      ],
+      'striptodos' => [
+        'description' => '',
+        'type' => 'int',
+        'size' => 'tiny',
+        'default' => NULL,
+      ],
+      'stripalarms' => [
+        'description' => '',
+        'type' => 'int',
+        'size' => 'tiny',
+        'default' => NULL,
+      ],
+      'stripattachments' => [
+        'description' => '',
+        'type' => 'int',
+        'size' => 'tiny',
+        'default' => NULL,
+      ],
+      'lastmodified' => [
+        'description' => '',
+        'type' => 'int',
+        'unsigned' => TRUE,
+      ],
+    ],
+    'primary key' => [
+      'id',
+    ],
+    'unique keys' => [
+      'principaluri' => [
+        'principaluri',
+      ],
+      'uri' => [
+        'uri',
+      ],
+    ],
+  ];
+  $schema['webdav__schedulingobjects'] = [
+    'description' => '',
+    'fields' => [
+      'id' => [
+        'description' => '',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'principaluri' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 255,
+        'binary' => TRUE,
+      ],
+      'calendardata' => [
+        'description' => '',
+        'type' => 'blob',
+      ],
+      'uri' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 200,
+        'binary' => TRUE,
+      ],
+      'lastmodified' => [
+        'description' => '',
+        'type' => 'int',
+        'unsigned' => TRUE,
+      ],
+      'etag' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 32,
+        'binary' => TRUE,
+      ],
+      'size' => [
+        'description' => '',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+    ],
+    'primary key' => [
+      'id',
+    ],
+  ];
+  $schema['webdav__locks'] = [
+    'description' => '',
+    'fields' => [
+      'id' => [
+        'description' => '',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'owner' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 100,
+      ],
+      'timeout' => [
+        'description' => '',
+        'type' => 'int',
+        'unsigned' => TRUE,
+      ],
+      'created' => [
+        'description' => '',
+        'type' => 'int',
+      ],
+      'scope' => [
+        'description' => '',
+        'type' => 'int',
+        'size' => 'tiny',
+      ],
+      'depth' => [
+        'description' => '',
+        'type' => 'int',
+        'size' => 'tiny',
+      ],
+      'token' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 100,
+        'binary' => TRUE,
+      ],
+      'uri' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 1000,
+        'binary' => TRUE,
+      ],
+    ],
+    'primary key' => [
+      'id',
+    ],
+    'indexes' => [
+      'token' => [
+        'token',
+      ],
+      'uri' => [
+        'uri',
+      ],
+    ],
+  ];
+  $schema['webdav__principals'] = [
+    'description' => '',
+    'fields' => [
+      'id' => [
+        'description' => '',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'uid' => [
+        'description' => '',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'uri' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 200,
+        'not null' => TRUE,
+        'binary' => TRUE,
+      ],
+      'email' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 80,
+        'binary' => TRUE,
+      ],
+      'displayname' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 80,
+      ],
+    ],
+    'primary key' => [
+      'id',
+    ],
+    'indexes' => [
+      'uri' => [
+        'uri',
+      ],
+      'email' => [
+        'email',
+      ],
+      'displayname' => [
+        'displayname',
+      ],
+    ],
+  ];
+  $schema['webdav__groupmembers'] = [
+    'description' => '',
+    'fields' => [
+      'id' => [
+        'description' => '',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'principal_id' => [
+        'description' => '',
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+      ],
+      'member_id' => [
+        'description' => '',
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+      ],
+    ],
+    'primary key' => [
+      'id',
+    ],
+    'unique keys' => [
+      'principal_member' => [
+        'principal_id',
+        'member_id',
+      ],
+    ],
+  ];
+  $schema['webdav__propertystorage'] = [
+    'description' => '',
+    'fields' => [
+      'id' => [
+        'description' => '',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'path' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 1024,
+        'not null' => TRUE,
+      ],
+      'name' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => 100,
+        'not null' => TRUE,
+      ],
+      'valuetype' => [
+        'description' => '',
+        'type' => 'int',
+        'unsigned' => TRUE,
+      ],
+      'value' => [
+        'description' => '',
+        'type' => 'blob',
+      ],
+    ],
+    'primary key' => [
+      'id',
+    ],
+    'indexes' => [
+      'path_property' => [
+        'path',
+        'name',
+      ],
+    ],
+  ];
+
+  return $schema;
+}
+
+/**
+ * Implements hook_install().
+ *
+ * @todo Move this to the backend or a drush script.
+ */
+function webdav_install($is_syncing) {
+  $database = \Drupal::service('database');
+  $query = $database
+    ->select('users', 'u');
+  $query
+    ->innerJoin('users_field_data', 'ufd', 'u.uid = ufd.uid');
+  $query
+    ->fields('u', ['uid', 'uuid'])
+    ->fields('ufd', ['name', 'mail']);
+  $query
+    ->condition('u.uid', 0, '>');
+  $result = $query
+    ->execute();
+
+  // Create WebDAV folder in filesystem.
+  /** @var \Drupal\Core\File\FileSystem $file_system */
+  $file_system = \Drupal::service('file_system');
+  $file_system->mkdir('private://webdav');
+  $file_system->mkdir('private://webdav/files');
+
+  while ($row = $result->fetchAssoc()) {
+    $account = user_load_by_name($row['name']);
+
+    $query = $database
+      ->insert('webdav__principals');
+    $query
+      ->fields([
+        'uid' => $row['uid'],
+        'uri' => 'principals/' . $row['name'],
+        'email' => $row['mail'],
+        'displayname' => $account->getDisplayName(),
+      ]);
+    $query
+      ->execute();
+
+    $query = $database
+      ->insert('webdav__principals');
+    $query
+      ->fields([
+        'uid' => $row['uid'],
+        'uri' => 'principals/' . $row['name'] . '/calendar-proxy-read',
+      ]);
+    $query
+      ->execute();
+
+    $query = $database
+      ->insert('webdav__principals');
+    $query
+      ->fields([
+        'uid' => $row['uid'],
+        'uri' => 'principals/' . $row['name'] . '/calendar-proxy-write',
+      ]);
+    $query
+      ->execute();
+
+    $file_system->mkdir('private://webdav/files/' . $row['uuid']);
+  }
+}
+

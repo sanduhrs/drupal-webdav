@@ -1,0 +1,29 @@
+services:
+  webdav.backend.authenticator:
+    class: Drupal\webdav\Backend\Authenticator
+
+  webdav.backend.caldav:
+    class: Drupal\webdav\Backend\CalDav
+    arguments: ['@database']
+
+  webdav.backend.carddav:
+    class: Drupal\webdav\Backend\CardDav
+    arguments: ['@database']
+
+  webdav.backend.lock:
+    class: Drupal\webdav\Backend\Lock
+    arguments: ['@database']
+
+  webdav.backend.principal:
+    class: Drupal\webdav\Backend\Principal
+    arguments: ['@database']
+
+  webdav.backend.property:
+    class: Drupal\webdav\Backend\Property
+    arguments: ['@database']
+
+  path_processor.webdav:
+    class: Drupal\webdav\PathProcessor\PathProcessorDav
+    tags:
+      - { name: path_processor_inbound }
+

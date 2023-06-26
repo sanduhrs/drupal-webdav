@@ -1,0 +1,15 @@
+{
+    "name": "drupal/webdav",
+    "description": "Web Distributed Authoring and Versioning",
+    "type": "drupal-module",
+    "license": "GPL-v2.0-or-later",
+    "authors": [
+        {
+            "name": "Stefan Auditor",
+            "email": "stefan@auditor.email"
+        }
+    ],
+    "require": {
+        "sabre/dav": "^4.4"
+    }
+}

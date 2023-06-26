@@ -1,0 +1,116 @@
+<?php
+
+use Drupal\Core\Entity\EntityInterface;
+
+/**
+ * Implements hook_ENTITY_TYPE_insert();
+ */
+function webdav_user_insert(EntityInterface $entity) {
+  $database = \Drupal::service('database');
+  $query = $database
+    ->insert('webdav__principals');
+  $query
+    ->fields([
+      'uid' => $entity->id(),
+      'uri' => 'principals/' . $entity->name->value,
+      'email' => $entity->mail->value,
+      'displayname' => $entity->getDisplayName(),
+    ]);
+  $query
+    ->execute();
+
+  $query = $database
+    ->insert('webdav__principals');
+  $query
+    ->fields([
+      'uid' => $entity->id(),
+      'uri' => 'principals/' . $entity->name->value . '/calendar-proxy-read',
+    ]);
+  $query
+    ->execute();
+
+  $query = $database
+    ->insert('webdav__principals');
+  $query
+    ->fields([
+      'uid' => $entity->id(),
+      'uri' => 'principals/' . $entity->name->value . '/calendar-proxy-write',
+    ]);
+  $query
+    ->execute();
+
+  /** @var \Drupal\Core\File\FileSystem $file_system */
+  $file_system = \Drupal::service('file_system');
+  $file_system->mkdir('private://webdav/' . $entity->id());
+
+  \Drupal::logger('webdav')
+    ->info('Principal created: @label', [
+    '@label' => 'principals/' . $entity->name->value,
+  ]);
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update();
+ */
+function webdav_user_update(EntityInterface $entity) {
+  $database = \Drupal::service('database');
+  $query = $database
+    ->update('webdav__principals');
+  $query
+    ->fields([
+      'uri' => 'principals/' . $entity->name->value,
+      'email' => $entity->mail->value,
+      'displayname' => $entity->getDisplayName(),
+    ]);
+  $query
+    ->condition('uid', $entity->id())
+    ->condition('uri', 'principals/' . $entity->original->name->value);
+  $query
+    ->execute();
+
+  $query = $database
+    ->update('webdav__principals');
+  $query
+    ->fields([
+      'uri' => 'principals/' . $entity->name->value . '/calendar-proxy-read',
+    ]);
+  $query
+    ->condition('uid', $entity->id())
+    ->condition('uri', 'principals/' . $entity->original->name->value . '/calendar-proxy-read');
+  $query
+    ->execute();
+
+  $query = $database
+    ->update('webdav__principals');
+  $query
+    ->fields([
+      'uri' => 'principals/' . $entity->name->value . '/calendar-proxy-write',
+    ]);
+  $query
+    ->condition('uid', $entity->id())
+    ->condition('uri', 'principals/' . $entity->original->name->value . '/calendar-proxy-write');
+  $query
+    ->execute();
+
+  \Drupal::logger('webdav')
+    ->info('Principal updated: @label', [
+    '@label' => 'principals/' . $entity->name->value,
+  ]);
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete();
+ */
+function webdav_user_delete(EntityInterface $entity) {
+  \Drupal::database()
+    ->delete('webdav__principals')
+    ->condition('uid', $entity->id(), '=')
+    ->execute();
+
+  // @todo delete the user's files or schedule them for deletion.
+
+  \Drupal::logger('webdav')
+    ->info('Principal deleted: @label', [
+    '@label' => 'principals/' . $entity->name->value,
+  ]);
+}

@@ -1,0 +1,27 @@
+webdav.root:
+  path: '/webdav'
+  methods: [OPTIONS, GET, POST, HEAD, DELETE, PROPFIND, PUT, PROPPATCH, COPY, MOVE, REPORT, MKCOL, LOCK, UNLOCK]
+  defaults:
+    _controller: '\Drupal\webdav\Controller\DavController'
+  requirements:
+    _access: 'TRUE'
+webdav.webdav:
+  path  : '/webdav/{path}'
+  methods: [OPTIONS, GET, POST, HEAD, DELETE, PROPFIND, PUT, PROPPATCH, COPY, MOVE, REPORT, MKCOL, LOCK, UNLOCK]
+  defaults:
+    _controller: '\Drupal\webdav\Controller\DavController'
+  requirements:
+    path: '^[^\?]*$'
+    _access: 'TRUE'
+webdav.well_known.caldav:
+  path: '/.well-known/caldav'
+  defaults:
+    _controller: '\Drupal\webdav\Controller\WellKnownController::caldav'
+  requirements:
+    _access: 'TRUE'
+webdav.well_known.carddav:
+  path: '/.well-known/carddav'
+  defaults:
+    _controller: '\Drupal\webdav\Controller\WellKnownController::carddav'
+  requirements:
+    _access: 'TRUE'
